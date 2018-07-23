@@ -33,16 +33,6 @@ class Consumer extends Request
                 throw new Exception\Stop();
             }
 
-            /*
-                queue: Queue from where to get the messages
-                consumer_tag: Consumer identifier
-                no_local: Don't receive messages published by this consumer.
-                no_ack: Tells the server if the consumer will acknowledge the messages.
-                exclusive: Request exclusive consumer access, meaning only this consumer can access the queue
-                nowait:
-                callback: A PHP Callback
-            */
-
             $object = $this;
 
             $this->getChannel()->basic_consume(
@@ -57,7 +47,6 @@ class Consumer extends Request
                 }
             );
 
-            // consume
             while (count($this->getChannel()->callbacks)) {
                 $this->getChannel()->wait(
                     null,
@@ -66,11 +55,10 @@ class Consumer extends Request
                 );
             }
         } catch (\Exception $e) {
-            if ($e instanceof Exception\Stop) {
-                return true;
-            }
-
-            if ($e instanceof AMQPTimeoutException) {
+            if (
+                $e instanceof Exception\Stop ||
+                $e instanceof AMQPTimeoutException
+            ) {
                 return true;
             }
 

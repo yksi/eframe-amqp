@@ -59,13 +59,6 @@ class Request extends Context
             throw new Exception\Configuration('Please check your settings, exchange is not defined.');
         }
 
-        /*
-            name: $exchange
-            type: topic
-            passive: false
-            durable: true // the exchange will survive server restarts
-            auto_delete: false //the exchange won't be deleted once the channel is closed.
-        */
         $this->channel->exchange_declare(
             $exchange,
             $this->getProperty('exchange_type'),
@@ -80,17 +73,6 @@ class Request extends Context
         $queue = $this->getProperty('queue');
 
         if (!empty($queue) || $this->getProperty('queue_force_declare')) {
-            /*
-                name: $queue
-                passive: false
-                durable: true // the queue will survive server restarts
-                exclusive: false // queue is deleted when connection closes
-                auto_delete: false //the queue won't be deleted once the channel is closed.
-                nowait: false // Doesn't wait on replies for certain things.
-                parameters: array // Extra data, like high availability params
-            */
-
-            /** @var ['queue name', 'message count',] queueInfo */
             $this->queueInfo = $this->channel->queue_declare(
                 $queue,
                 $this->getProperty('queue_passive'),
@@ -107,7 +89,7 @@ class Request extends Context
                 $this->getProperty('routing')
             );
         }
-        // clear at shutdown
+
         $this->connection->set_close_on_destruct(true);
     }
 

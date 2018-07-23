@@ -38,6 +38,7 @@ class AmqpServiceProvider extends ServiceProvider
         $this->app->singleton('EFrame\Amqp\Publisher', function ($app) {
             return new Publisher(config());
         });
+        
         $this->app->singleton('EFrame\Amqp\Consumer', function ($app) {
             return new Consumer(config());
         });
@@ -50,6 +51,10 @@ class AmqpServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return ['Amqp', 'EFrame\Amqp\Publisher', 'EFrame\Amqp\Consumer'];
+        return [
+            'Amqp', 
+            'EFrame\Amqp\Publisher', 
+            'EFrame\Amqp\Consumer'
+        ];
     }
 }
