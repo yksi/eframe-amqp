@@ -10,7 +10,6 @@ use Closure;
  */
 class Amqp
 {
-
     /**
      * @param string $routing
      * @param mixed  $message
@@ -21,7 +20,7 @@ class Amqp
         $properties['routing'] = $routing;
 
         /* @var Publisher $publisher */
-        $publisher = app()->make('EFrame\Amqp\Publisher');
+        $publisher = app()->make(Publisher::class);
         $publisher
             ->mergeProperties($properties)
             ->setup();
@@ -46,7 +45,7 @@ class Amqp
         $properties['queue'] = $queue;
 
         /* @var Consumer $consumer */
-        $consumer = app()->make('EFrame\Amqp\Consumer');
+        $consumer = app()->make(Consumer::class);
         $consumer
             ->mergeProperties($properties)
             ->setup();
