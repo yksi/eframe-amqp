@@ -25,7 +25,7 @@ class AmqpServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->app->bind('Amqp', 'EFrame\Amqp\Amqp');
+        $this->app->bind('Amqp', Amqp::class);
     }
 
     /**
@@ -35,11 +35,11 @@ class AmqpServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('EFrame\Amqp\Publisher', function ($app) {
+        $this->app->singleton(Publisher::class, function ($app) {
             return new Publisher(config());
         });
         
-        $this->app->singleton('EFrame\Amqp\Consumer', function ($app) {
+        $this->app->singleton(Consumer::class, function ($app) {
             return new Consumer(config());
         });
     }
