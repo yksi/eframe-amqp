@@ -26,42 +26,32 @@ class Consumer extends Request
      */
     public function consume($queue, Closure $closure)
     {
-        try {
-            $this->messageCount = $this->getQueueMessageCount();
+        $this->messageCount = $this->getQueueMessageCount();
 
-            if (!$this->getProperty('persistent') && $this->messageCount == 0) {
-                throw new Exception\Stop();
+        if (!$this->getProperty('persistent') && $this->messageCount == 0) {
+            throw new Exception\Stop();
+        }
+
+        $object = $this;
+
+        $this->getChannel()->basic_consume(
+            $queue,
+            $this->getProperty('consumer_tag'),
+            $this->getProperty('consumer_no_local'),
+            $this->getProperty('consumer_no_ack'),
+            $this->getProperty('consumer_exclusive'),
+            $this->getProperty('consumer_nowait'),
+            function ($message) use ($closure, $object) {
+                $closure($message, $object);
             }
+        );
 
-            $object = $this;
-
-            $this->getChannel()->basic_consume(
-                $queue,
-                $this->getProperty('consumer_tag'),
-                $this->getProperty('consumer_no_local'),
-                $this->getProperty('consumer_no_ack'),
-                $this->getProperty('consumer_exclusive'),
-                $this->getProperty('consumer_nowait'),
-                function ($message) use ($closure, $object) {
-                    $closure($message, $object);
-                }
+        while (count($this->getChannel()->callbacks)) {
+            $this->getChannel()->wait(
+                null,
+                !$this->getProperty('blocking'),
+                $this->getProperty('timeout') ? $this->getProperty('timeout') : 0
             );
-
-            while (count($this->getChannel()->callbacks)) {
-                $this->getChannel()->wait(
-                    null,
-                    !$this->getProperty('blocking'),
-                    $this->getProperty('timeout') ? $this->getProperty('timeout') : 0
-                );
-            }
-        } catch (\Exception $e) {
-            if (
-                $e instanceof Exception\Stop
-            ) {
-                return true;
-            }
-
-            throw $e;
         }
 
         return true;
