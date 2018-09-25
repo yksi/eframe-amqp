@@ -56,8 +56,7 @@ class Consumer extends Request
             }
         } catch (\Exception $e) {
             if (
-                $e instanceof Exception\Stop ||
-                $e instanceof AMQPTimeoutException
+                $e instanceof Exception\Stop
             ) {
                 return true;
             }
