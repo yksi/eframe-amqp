@@ -1,5 +1,5 @@
 {
-  "name": "eframe/amqp",
+  "name": "yksi/eframe-amqp",
   "description": "AMQP wrapper for Laravel and Lumen to publish and consume messages",
   "keywords": [
     "laravel",
